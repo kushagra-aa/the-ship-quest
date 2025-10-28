@@ -4,6 +4,7 @@ export default class GameScene extends Phaser.Scene {
   player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   fuel = 100;
+  fuelContainer!: Phaser.GameObjects.Rectangle;
 
   bgFar!: Phaser.GameObjects.TileSprite;
 
@@ -30,6 +31,9 @@ export default class GameScene extends Phaser.Scene {
       .sprite(200, 300, "character-main")
       .setDisplaySize(200, 200)
       .setCollideWorldBounds(true);
+    this.fuelContainer = this.add
+      .rectangle(0, 30, (this.fuel / 100) * 800, 10, 0x00ff00)
+      .setOrigin(0);
 
     this.physics.add.collider(this.player, ground);
     this.cursors = this.input.keyboard!.createCursorKeys();
@@ -37,17 +41,21 @@ export default class GameScene extends Phaser.Scene {
 
   update() {
     // Background scroll
-    this.bgFar.tilePositionX += 0.2;
 
     // Player controls
-    if (this.cursors.space?.isDown && this.fuel > 0) {
+    if (this.cursors.space?.isDown && this.fuel > 0.9) {
+      this.bgFar.tilePositionX += 0.7;
       this.player.setVelocityY(-200);
-      this.fuel -= 0.5;
+      this.fuel = this.fuel - 1;
     } else {
-      this.fuel = Math.min(this.fuel + 0.1, 100);
+      if (this.player.y === 400) this.fuel = Math.min(this.fuel + 0.25, 100);
+      else this.fuel = Math.min(this.fuel + 0.01, 100);
     }
 
     // Fuel bar (temporary)
-    this.add.rectangle(80, 30, this.fuel * 2, 10, 0x00ff00).setOrigin(0);
+    this.fuelContainer.setSize((this.fuel / 100) * 800, 10);
+    if (this.fuel > 10) this.fuelContainer.setFillStyle(0x00ff00);
+    if (this.fuel < 10) this.fuelContainer.setFillStyle(0xf59300);
+    if (this.fuel <= 1) this.fuelContainer.setFillStyle(0xff0000);
   }
 }

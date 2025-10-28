@@ -8,7 +8,7 @@ const config: Phaser.Types.Core.GameConfig = {
   backgroundColor: "#1e1e1e",
   physics: {
     default: "arcade",
-    arcade: { gravity: { y: 200, x: 0 }, debug: true },
+    arcade: { gravity: { y: 500, x: 0 }, debug: true },
   },
   scene: [GameScene],
 };
